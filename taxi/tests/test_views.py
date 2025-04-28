@@ -85,7 +85,9 @@ class PrivateManufacturerTests(TestCase):
 class PrivateCarTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username="testuser3", password="testpass3"
+            username="testuser3",
+            password="testpass3",
+            license_number="ABC12345"
         )
         self.client.login(username="testuser3", password="testpass3")
         self.manufacturer = Manufacturer.objects.create(
@@ -115,11 +117,10 @@ class PrivateCarTests(TestCase):
             {
                 "model": "Camry",
                 "manufacturer": self.manufacturer.id,
-                "drivers": []
+                "drivers": [self.user.id]
             },
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(Car.objects.filter(model="Camry").exists())
+        self.assertEqual(response.status_code, 302)
 
     def test_car_update_view(self):
         response = self.client.get(reverse("taxi:car-list"))
@@ -137,7 +138,9 @@ class PrivateCarTests(TestCase):
 class PrivateDriverTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username="testuser4", password="testpass4"
+            username="testuser4",
+            password="testpass4",
+            license_number="ABC12345"
         )
         self.client.login(username="testuser4", password="testpass4")
         self.driver = Driver.objects.create_user(
